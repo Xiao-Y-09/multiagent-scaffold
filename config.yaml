@@ -1,0 +1,13 @@
+entry: researcher
+edges:
+  researcher: writer
+  writer: reviewer
+  reviewer: END
+
+agents:
+  researcher:
+    model: { provider: ollama, model: "gemma3:4b" }
+  writer:
+    model: { provider: ollama, model: "gemma3:27b" }
+  reviewer:
+    model: { provider: ollama, model: "gemma3:27b" }
