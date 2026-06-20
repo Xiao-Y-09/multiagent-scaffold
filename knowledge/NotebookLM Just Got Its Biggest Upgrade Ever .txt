@@ -1,0 +1,115 @@
+Okay, I’ll be honest with you.
+
+When I first heard that NotebookLM was getting a major update, my reaction was something like mild interest. I love NotebookLM. I’ve written about it on this page before. But “major update” is a phrase that gets thrown around a lot in the AI space, and more often than not it means one or two small improvements wrapped in a press release that sounds like they rebuilt the whole thing from scratch.
+
+This time was genuinely different.
+
+On June 8th, 2026, Google dropped what they’re calling an across-the-board upgrade to NotebookLM. And when I actually sat down to understand what changed, I had that rare feeling of realizing a tool I already use regularly has become something meaningfully bigger than it was last week.
+
+Not marginally bigger. Actually bigger. The kind of bigger where you have to rethink what the tool is for.
+
+So let me walk you through what’s new, what’s actually worth caring about, and honestly, what the limitations are that the announcement didn’t exactly lead with.
+
+The Short Version of What Just Changed
+Three years ago, NotebookLM launched as an experimental Google Labs project. The idea was simple and genuinely useful: upload your documents, and ask an AI questions about them. No hallucinations from general internet knowledge. Just your sources, grounded answers, and clear citations back to where each piece of information came from.
+
+That core idea made NotebookLM one of the most practically useful AI tools I’ve come across for real research and knowledge work. Not the flashiest. Not the most talked about. But quietly excellent for the specific job it was designed for.
+
+What just happened is Google took that foundation and added three things that change the ceiling of what the tool can do.
+
+NotebookLM now runs on Gemini 3.5 alongside a new framework called Antigravity, the same agentic infrastructure Google unveiled at its developer conference in May 2026. The changes are substantial across three distinct areas: the chat interface, the output system, and the process for starting research projects.
+
+Let me go through each of those in plain terms.
+
+The First Big Change: NotebookLM Can Now Write and Run Code
+This is the one that stopped me when I read it. Because it changes what the tool is in a fundamental way.
+
+Every notebook is now equipped with its own secure cloud computer. This allows NotebookLM to write and execute code natively, enabling users to perform complex data analysis directly within the platform.
+
+Here’s what that means practically, because “code execution” sounds technical until you see what it actually enables.
+
+Say you upload three years of client invoices as spreadsheets. Previously, NotebookLM could tell you what was in those documents. It could summarize them. It could answer questions about specific clients or projects. What it couldn’t do is actually crunch the numbers for you, run calculations, build a chart, or produce a formatted report from that data.
+
+Now it can. You describe what you want in plain English, and NotebookLM writes the code, runs it in its own secure cloud environment, and gives you the output. A bar chart comparing year-over-year revenue. A ranked list of your highest-value clients. A cleaned and formatted version of a messy dataset.
+
+Powered by the Gemini 3.5 AI model, NotebookLM now supports secure, cloud-based code execution and advanced data analysis, making it particularly useful for professionals like data scientists and project managers. This integration reduces the need for switching between multiple applications, streamlining processes while minimizing errors.
+
+For freelancers and small business owners who deal with financial data, client information, or any kind of structured records, this is not a small thing. It means a tool you may already be using for document research can now also be the place where you actually analyze that data, not just read about it.
+
+The system also includes 100 plus curated software skills, expanding its ability to process and interpret complex information.
+
+You don’t choose which skills to activate. NotebookLM figures out which ones are relevant to what you’re trying to do. You just describe the task.
+
+The Second Big Change: You Can Start From an Idea Instead of a Document
+This one is more subtle but worth paying attention to, because it changes the workflow for research in a way that removes the most annoying first step.
+
+Previously, NotebookLM required users to input pre-existing documents to get started. The upgraded version reverses this friction, allowing users to initiate research with loose ideas, open-ended questions, or prompts. The AI can now actively assist in building a source repository from scratch, utilizing Google Search to find high-quality, relevant web sources and primary documents across multiple languages.
+
+So the old way went: have sources, upload sources, research sources. The new way can go: have an idea or a question, let NotebookLM find the sources, then research those sources.
+
+If you’ve ever sat down to research a topic and felt overwhelmed at the document collection stage, this is the part that addresses that friction. You describe what you’re trying to understand. NotebookLM uses Google Search to surface relevant material. You review what it found and decide what goes into your notebook. Then you do the actual research from there.
+
+Google emphasized that users retain full control over which sources are added, and all citations remain clearly attributed.
+
+That last part matters. The thing that makes NotebookLM trustworthy for research is the citation system. Every answer ties back to a specific source you can verify. That hasn’t changed with this update. The AI can now find the sources, but you decide what goes in, and everything it tells you still traces back to specific material you can check.
+
+The Third Big Change: More Formats for What It Produces
+NotebookLM has always been able to produce summaries and study guides from your sources. The update significantly expands what it can actually output.
+
+The platform has expanded its output capabilities beyond simple text summaries. Google is also expanding the types of content NotebookLM can generate, now including reports, presentations, data visualizations, and more structured document formats alongside the Audio Overviews and study guides that were already available.
+
+The practical value here is time saved on reformatting. You do the research inside NotebookLM. You ask it to turn that research into a formatted report, a presentation outline, or a structured briefing document. You spend your time on the thinking, not on moving information from one format to another.
+
+The Part the Announcement Didn’t Lead With
+Here’s the honest part, because I promised you I only recommend tools I actually use and I’d rather give you the full picture than just the headline.
+
+The upgrades are rolling out globally via the web starting June 8, 2026. Access is limited to two groups: users with a Google AI Ultra subscription, and Workspace business customers with either AI Ultra Access or AI Expanded Access. Free-tier users are not included in the initial rollout. Google stated it plans to expand access to others over time but did not provide a schedule.
+
+So the new features, the code execution, the web-sourced research, the expanded output formats, these are not available on the free plan right now. In fact, they aren’t even available on the standard $20 per month ‘Pro’ tier. Google has locked these premium NotebookLM capabilities behind their high-end Google AI Ultra subscription, which starts at a steep $99.99 per month, and select Workspace business accounts.
+
+Premium NotebookLM capabilities remain restricted to paid Google AI and Workspace subscribers.
+
+This matters for how you think about this update. If you’re a free user, what you have access to today hasn’t changed dramatically. The core features, the document uploading, the cited Q and A, the Audio Overviews, those remain available. The new agentic capabilities are the paid tier, at least for now.
+
+Google says access will expand over time, which is consistent with how they’ve rolled out previous NotebookLM features. The million-token context window, for example, eventually made it to free users after launching for paid tiers. There’s reason to expect the same pattern here, just without a firm timeline.
+
+The Transparency Feature That Deserves More Attention
+There’s one part of this update that I think is genuinely underrated and isn’t getting enough attention in the coverage I’ve read.
+
+The upgraded version shows the reasoning steps, that is, the chain of thoughts by which it reached a conclusion, so you can check the path and not just the final result.
+
+This matters more than it might seem at first. One of the legitimate concerns about using AI for research is that you can’t always tell why it reached a particular conclusion. The answer appears, it sounds reasonable, and you either trust it or you don’t.
+
+Being able to see the reasoning path changes this. You can follow the logic. You can spot the step where you disagree or where something seems off. You can evaluate the thinking, not just the output.
+
+The tool aims to fully automate these workflows, forcing a massive re-evaluation of what a research assistant can actually do.
+
+Combined with the existing citation system, this makes NotebookLM’s research outputs more auditable than almost anything else in this space. You can trace the answer back through the reasoning to the specific source passage. That’s a meaningful quality control mechanism for anyone doing research where accuracy actually matters.
+
+Who This Update Actually Matters For
+Let me be direct about this, because not every tool update is equally relevant for every person reading this page.
+
+If you’re a freelancer or small business owner who regularly processes large amounts of information, client documents, research material, financial records, industry reports, this update is worth paying attention to seriously. The combination of document analysis, code execution for data work, and expanded output formats addresses a real workflow that a lot of people in this space have. You collect information, you need to make sense of it, and you need to produce something from it. NotebookLM is now capable of supporting all three stages in one place.
+
+If you’re a content creator or writer who does research before creating, the web-sourced research starting point removes a friction that’s real and annoying. Starting from a question rather than a pre-assembled document library makes the tool accessible earlier in the research process.
+
+If you’re a student or someone learning complex material, the existing features, including Audio Overviews, flashcards, and cited Q and A, remain exactly as useful as they were before this update. Those haven’t gone anywhere.
+
+If you’re primarily interested in the new code execution and agentic features and you’re on the free plan, the honest advice is to keep an eye on the rollout timeline and check back in a few months. Google has historically expanded access to new NotebookLM features, but the timing is unpredictable.
+
+What I’m Actually Going to Use Differently
+Here’s the practical part.
+
+The feature I’m most immediately interested in is the web-sourced research starting point. My current research workflow involves a lot of time spent in the collection phase before I can do anything useful in NotebookLM. Being able to start from a question and let NotebookLM help me find and evaluate relevant sources cuts that phase significantly.
+
+The code execution for data analysis is genuinely exciting for anything involving structured data. I’ve wanted to do more with the financial and usage data I collect without switching to a separate tool for the analysis piece. Having that capability inside NotebookLM, grounded in documents I’ve uploaded, is the combination that makes it actually useful rather than just technically interesting.
+
+The reasoning transparency feature is the one I’ll use most quietly but most consistently. For any research I plan to publish or share with clients, being able to audit the reasoning path rather than just the conclusion gives me a level of confidence in the output that I couldn’t have before.
+
+NotebookLM just became a more capable tool than it was last week. That doesn’t mean it’s perfect, and it doesn’t mean it replaces everything else in your stack. But for research-heavy work that involves making sense of documents and producing something from that understanding, the ceiling just got meaningfully higher.
+
+Worth knowing about. Worth trying if you have access.
+
+See you in the next one.
+
+— — Mubashir :)

@@ -1,0 +1,75 @@
+In February 2025 I wrote a guide on running DeepSeek R1 locally, then quietly stopped using it within two weeks. Qwen 3.6 made me try again.
+
+Press enter or click to view image in full size
+
+In February 2025 I published a tutorial on setting up DeepSeek R1 8B on a MacBook. What I never wrote was the follow-up: I stopped using it after about two weeks. The model was fun to demo and useless for work. It rewrote a function I asked it to explain, hallucinated a Laravel helper that doesn’t exist, and crawled the moment I pasted in anything longer than one file. I went back to paying for API access and didn’t feel bad about it.
+
+So when posts about the new generation of local coding models started showing up in my feed this spring, my default reaction was: sure, I’ve heard this one before. Every six months somebody declares that local models have caught up, and every six months the actual experience is a 4-bit quantized something producing code you spend more time fixing than writing.
+
+But two releases in April were specific enough that I gave up a weekend to check. I’m glad I did, because one of these models is the first local LLM I’ve run that I haven’t deleted afterward. It’s still on my machine. I used it this morning.
+
+This is what I ran, on what hardware, and where it fell over.
+
+Why local models kept losing for me
+Press enter or click to view image in full size
+
+The pitch for local models was never the problem. Your code stays on your machine, nobody meters your tokens, it works on a plane. For anyone touching client codebases under NDA, “the code never leaves the laptop” is not a nice-to-have, it’s the whole argument.
+
+The problem was that the models you could realistically run were bad at code. An 8B model at Q4 quantization writes code like a confident intern who skimmed the documentation. The models that were actually good — the 70B class — technically loaded on a Mac with enough memory and then generated four tokens a second, which is slower than I type.
+
+There’s a hardware reason for this that took me embarrassingly long to internalize: token generation speed is bound by memory bandwidth, not compute. A Pro-level Apple chip moves something like 270GB/s. An RTX 3090 moves 936GB/s. Every token requires sweeping the model’s active weights through memory, so a big dense model on a Mac is slow in a way no software update fixes. The Mac’s one advantage — unified memory, where your 36GB of RAM is also your VRAM — lets you load big models. It never made them fast.
+
+So that was the trap for years. Small models fit and were dumb. Big models were smart and unusable. I wrote that DeepSeek tutorial right into the middle of the trap without fully seeing it.
+
+What changed in April
+Press enter or click to view image in full size
+
+Two model releases, six days apart, attacked the trap from both ends.
+
+On April 16, Alibaba released Qwen 3.6–35B-A3B, a mixture-of-experts model with 35B total parameters but only 3B active per token. That ratio is the entire trick. The file sits in memory at about 20GB quantized, but each generated token only sweeps 3B parameters through the bandwidth bottleneck — so it generates at the speed of a small model while drawing on the knowledge of a much larger one. Community numbers on Apple Silicon put it at 35 to 55 tokens per second. For reference, anything above 20 feels instant in practice.
+
+On April 22, the same team shipped Qwen 3.6–27B, a dense model aimed squarely at code. It scores 77.2 on SWE-bench Verified — the benchmark where models fix real GitHub issues across multiple files, not the toy single-function tests. Simon Willison ran the 16.8GB quantized build the day it came out and clocked 25.57 tokens per second on his Mac, calling the output an outstanding result for a model that size. When Willison is impressed by a local model, that means something; he’s been publicly unimpressed for years.
+
+For context, 77.2 on SWE-bench Verified is territory where frontier cloud models were sitting not very long ago, and it’s coming out of a 16.8GB file under an Apache 2.0 license that nobody can revoke or reprice.
+
+DeepSeek also released V4 the evening of April 23, but the variant worth caring about needs roughly 140GB for the weights alone. That’s a Mac Studio story, not a MacBook story, so I left it alone.
+
+The weekend lineup
+Press enter or click to view image in full size
+
+My machine is a MacBook Pro with 36GB of unified memory. Not the 48GB sweet spot the buying guides recommend, not the 16GB floor. The awkward middle, which I suspect is where a lot of developers actually live.
+
+I pulled four models through Ollama: the Qwen 3.6–27B dense at Q4_K_M (16.8GB), the Qwen 3.6–35B-A3B MoE at Q4 (about 20GB), Mistral’s Devstral Small 24B (the one tuned for agentic loops — edit files, run tests, read errors, retry), and Codestral 22B for in-editor autocomplete through the Continue extension in VS Code. The downloads alone ate most of Friday evening. Nobody mentions that a 20GB model on hotel wifi is an overnight job.
+
+Two setup details cost me real time, so I’ll save you the same.
+
+First, Ollama’s default context window is 2048 tokens. That’s maybe 400 lines of code. I spent half of Saturday morning convinced the 27B was broken because it kept “forgetting” the file I’d just pasted — it wasn’t forgetting anything, it literally never saw the bottom half. You have to raise num_ctx yourself (I settled on 32768). The default has been catching people for two years and Ollama still hasn't changed it.
+
+Second, the memory math is less forgiving than the download page implies. The rule that held up in my testing: the model file should stay under about two-thirds of your total RAM, because macOS wants 3–4GB and the context cache grows with every token you feed in. The 16.8GB dense model on my 36GB machine was comfortable. The 20GB MoE plus a 32K context plus Chrome with forty tabs was not, and the first sign wasn’t a crash — it was everything getting quietly, infuriatingly slow as the machine started swapping. On a 24GB Mac the 27B technically runs, but you’d be living on a knife’s edge, and I wouldn’t.
+
+LM Studio deserves a mention here because it now uses Apple’s MLX framework as a backend, which runs 10–30% faster than Ollama’s llama.cpp engine on the same model. Ollama itself shipped an MLX preview recently too. I used Ollama anyway for the API server, but if you just want a chat window, LM Studio is the faster path now.
+
+What real work looked like
+Press enter or click to view image in full size
+
+Benchmarks tell you about benchmarks, so I gave each model the same three jobs from my actual backlog: refactor a payment-notification service across four files in a Laravel codebase, find the bug in a spectacularly ugly SQL query with three joins that was returning duplicates, and write unit tests for a module I’d been putting off testing since March.
+
+The 27B dense model did the refactor correctly on the second attempt. The first attempt was right in structure but renamed a method and missed one call site — exactly the kind of near-miss that makes you check everything. The second attempt, after I pointed at the missed call site, was clean. The SQL bug it found immediately, including the reason (a join condition that fanned out rows before the aggregate), and its explanation was better than the fix I’d had in mind. The unit tests were the weakest output: correct, compiling, and all happy-path. I had to explicitly ask for failure cases, and even then it tested errors I’d never realistically see while missing the timezone edge case that had actually bitten us.
+
+The MoE was noticeably faster and noticeably less careful. Same refactor: it produced beautiful-looking output that broke a type contract two files away. When I gave it the resulting error, it fixed it instantly. That turned out to be the pattern — it’s wrong faster, and corrects faster, which oddly makes it pleasant for exploratory work and nerve-wracking for anything I intended to commit. Three weeks later I still haven’t decided whether its speed is worth its flakiness. Both are still installed, which is itself a kind of answer.
+
+Devstral I tested inside an agent loop, where it’s supposed to shine, and it did — it was the only model of the four that reliably read an error message and modified the right file in response, instead of the file most recently discussed. As a chat model it’s mid. As the engine of an edit-test-fix loop it punched above its size.
+
+Codestral with Continue gave me working local autocomplete that felt maybe a year behind Copilot. Multi-line completions inside an existing function were good. Anything requiring awareness of another file was a coin flip. I turned it off after two days — not because it was bad, but because the latency on battery power was just enough to make me notice it, and autocomplete you notice is autocomplete that’s failing at its job.
+
+The honest verdict
+Press enter or click to view image in full size
+
+The best local LLM for coding in 2026, on hardware a working developer plausibly owns, is Qwen 3.6–27B at Q4_K_M. It’s not close. The MoE is the better demo; the 27B is the better colleague.
+
+What I can’t claim is that it replaced the cloud for me. For the hardest debugging — the kind where the bug is a wrong assumption spread across a codebase — frontier models are still meaningfully better, and pretending otherwise would be the kind of cheerleading I hate reading. My setup since that weekend: the 27B handles everything I’d previously have sent over the wire while on client code, plus all the boring generation work, and I escalate to a paid API when I’m properly stuck. My API spend last month was down by more than half. Not zero.
+
+Whether you should bother depends almost entirely on RAM. At 16GB, skip it; nothing in this article runs well there, and a small model that fits will disappoint you into writing off the whole category. At 24GB you can run the 27B with tight context and some patience. At 32GB and above it stops being an experiment and starts being a tool. And if you’re buying a new Mac anyway, the difference between the 16GB and 48GB configuration is now the difference between “can’t really do local AI” and “runs the best open coding model comfortably” — which is a strange spec to suddenly care about, but here we are.
+
+Sixteen months ago I wrote a local-LLM tutorial about a model I’d abandoned by the time most people read it. I’m aware of the irony of writing another one. The difference is that this time, when I finished the draft, I asked the 27B to review it — locally, on battery, in airplane mode — and it caught two factual slips. The DeepSeek R1 of February 2025 would have invented a third.
+

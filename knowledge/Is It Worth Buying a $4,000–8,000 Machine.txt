@@ -1,0 +1,138 @@
+Yes, another post about running things on your own machine, but in mine I’ll try to discourage you, slowly breaking your morale with the harsh reality by walking you through the limitations and caveats.
+
+Press enter or click to view image in full size
+
+Short answer:
+
+If you’d buy a gaming PC to mostly play undemanding stuff, only occasionally firing up the popular game everyone’s talking about, then running AI locally isn’t all that different. And specially if you really want an uncensored model.
+If I didn’t lose you there, a couple of things to clarify:
+
+You don’t need a top of the line machine. To start, it’s basically just Ollama.
+The smarter the model (say, Llama 3.1 8B vs. Qwen 2.5 32B, or a mixture-of-experts one like Qwen3 30B-A3B), the bigger it is and the more resources it needs.
+A dedicated GPU will trump anything you can run on your Mac. I tried both, and the performance difference is noticeable.
+No matter how good your PC is, it won’t compare to the datacenter-scale models you get through a subscription.
+A quick word on the models: those 8b, 32b, 30b-a3b tags are the parameter counts (billions of weights). Bigger usually means smarter, but also a heavier download and more memory. Rough rule for the compressed versions most people run: halve the number to get the GB you need. So 32B ≈ 16GB, 8B ≈ 4GB. Start small, then size up once you know your machine can take it.
+
+Running Models with Ollama
+Ollama is the easiest way in. Install it, pull a model, and you’re chatting.
+
+Install it. Grab it from ollama.com (Mac, Windows, or Linux). On Linux it’s a one-liner: curl -fsSL https://ollama.com/install.sh | sh.
+Start the server. Everything else talks to a background server, so this comes first. Run ollama serve and leave it going.
+Pull a model. In another terminal, browse the model library, pick one that fits your RAM/VRAM, and run ollama pull llama3.1:8b.
+Run it. ollama run llama3.1:8b drops you into a chat right there in the terminal.
+Okay, congrats, you got it running! Now, you wonder… How do I make it to run with Claude and make it do my work?
+
+Quick and simple: you set a few env vars…
+
+export ANTHROPIC_BASE_URL="http://localhost:11434"
+export ANTHROPIC_AUTH_TOKEN="ollama"
+export ANTHROPIC_API_KEY="ollama"
+
+# Launch with a light coding model that won't melt your machine
+claude --model llama3.1:8b
+BUT have you ever heard of context? I thought not. It’s nothing you really worry about with subscriptions…
+
+Claude injects a lot of context to make things magically go smoothly, which means more resources, so your computer will suffer if you’re barely can run it well directly with Ollama.
+
+So don’t think of it as running a simple “hello world”, it’s running a full preprompt with all the instructions baked in.
+
+Yes, you can offload part of it and preprocess, but you’ll soon see that’s not fast or efficient. Now more speed looks tempting, right?
+
+I could go on about the options for running efficiently, because you’ll hit some obvious problems with Ollama:
+
+How do I improve it? This is pretty much what you get. Image processing and other basic stuff aren’t available out of the box.
+How do I reroute things? Ah, so you’ve heard about delegating tasks to the cloud version while your local slave does the grunt work. Maybe another day we can talk about it.
+How can I forward queries from another device to it? Short answer, you have to use LM Studio instead, you connect your devices through it. But Ollama is easier for quickly trying things out. YW.
+Back to the “context” issue: your chatbot might feel a little slow if you try bigger models.
+
+And if you stick with a small 6GB model like I did, the answers won’t be that useful. Those have a small context window (a few thousand tokens), and bumping it up eats more memory you don’t have to spare… so it’s more “run and forget” than a consistent conversation.
+
+So I Upgraded My Machine
+From an MSI GeForce RTX 5060 Ti 16GB to a 5090 32GB. So, from an $800 GPU to a $4,000 one.
+
+Full details here in BuildCores. Amazing site. I love anything that helps keep track of things.
+
+Anyway, it really makes the difference. I became a better person the moment I could no longer be called low-end with my 5060 Ti… but there’s always someone who can still call you low-end. That’s just part of life.
+
+The 5060 Ti with 16GB beat my 24GB MacBook M4 Air, and it comes down to memory bandwidth. The Mac’s 24GB is unified memory shared with the whole system, at a fraction of the bandwidth a dedicated card pushes. The 5060 Ti has 16GB of fast GDDR all to itself, plus CUDA cores the inference frameworks are built for. LLM inference lives and dies by bandwidth, so the dedicated card wins even with less total memory.
+
+It ran smaller models fine, but past ~12GB plus context it got painfully slow. That’s where offloading comes in: when a model won’t fit in VRAM, the rest spills into system RAM and runs on the CPU. It works, but the CPU side is far slower, so your tokens-per-second falls off a cliff. Add the extra preprocessing time and it was usually faster to just do the thing manually.
+
+
+Still too expensive, and not something I’d recommend easily. I’ve always said a high-end gaming PC is usually wasted on basic games by the people who can afford them, and I’m no exception, I’d rather use my PS5. The point is: if you have multiple uses for it, it’s fine.
+
+Going off topic, image generation speed also improved a lot. Video too, a few seconds of it used to be painfully slow, now it’s bearable. So for video, stick with Grok unless you can do better. For images… it’s complicated. Still digesting that one.
+
+But hopefully I’ve discouraged you from buying a PC just to run AI. If you still have some doubts, hopefully the next section helps.
+
+Question Time
+Will the prices go down?
+
+I say no. People are willing to pay, so what’s the incentive to drop them? Yeah, you and your friends might not, but some random guy writing on Medium like me probably will.
+
+Jokes aside, it reminds me of the car market, prices never really recovered after the COVID pandemic. And honestly, the cheap alternatives won’t be that useful.
+
+How’s the electricity bill?
+
+Can’t really separate it from heating and normal expenses. But based on a friend who recommended me various components, a high-rated PSU (Platinum, Titanium) wastes less power as heat, so more of what you pull from the wall actually reaches your components.
+
+A Titanium unit is rated around 90%+ efficient even at low load, so over a year of heavy use it does add up. The catch: a more efficient PSU doesn’t make your GPU draw less, it just loses less along the way. The 5090 is still the one eating your bill.
+
+How’s the R18+?
+
+You like anime? Quite easy to make.
+
+Realistic humans, though, you’ll need to go pro with refined workflows (Like with ComfyUI), not the casual/quick stuff we’re used to do with Grok (Close enough with SwarmUI).
+
+Will your 5090 melt?
+
+Hopefully not. It’s using the PSU’s dedicated cable with protection, so fingers crossed.
+
+What about Mac Studio?
+
+The pitch is tempting: Apple’s unified memory means a Mac Studio can hold a huge model in RAM, more than most consumer GPUs can touch.
+
+There are videos where they chained four of them together to pool the memory and run a super AI model.
+
+Cool, but each costs around $5,000. For that budget I’d rather build something from scratch and actually own the upgrade path.
+
+What about old servers?
+
+Not worth it, not fast enough. The temptation is obvious: old enterprise servers are cheap on the used market and come with a ton of RAM, so it feels like a bargain.
+
+But for AI, memory has to be fast, not just plentiful, and that server RAM is slow compared to the VRAM on a graphics card. Without a real GPU, the model runs on the CPU, and that crawls.
+
+The result: a loud, power-hungry box that’s still slower than one modern consumer GPU. The cheap price is a trap, you pay it back in speed, noise, and electricity.
+
+And what about a setup to run your DBs and servers?
+
+That’s homelabbing, and if you want to roleplay as a sysadmin in your free time, more power to you, mate.
+
+Why did you double down on more AI power?
+
+My current employer gives me enough tokens to drown myself in every day, but for personal stuff I’d rather delegate the processing locally. It kinda reminds me of slavery, not in the bad sense… ehm I mean… subcontracting, yeah, subcontracting. It’s like owning a 24/7 Semi-Senior, an assistant.
+
+Plus, uncensored models.
+
+And it won’t get cheap, I hope it does, but I truly doubt it. So if local stuff keeps getting better, I want to be ready. For now it’s fine, but only time will tell how this plays out.
+
+Claude or Cursor?
+
+Claude is the best tech thing that’s happened to me since Terraform, and that’s saying a lot. Since 4.5 it’s been a lot of solid work.
+
+I’d say the subscription plans can’t compare to Bedrock + Claude. I transitioned from the $20 plan to API billing, and the difference is very noticeable. I remember spending whole weekends without making progress, now I can get things done in under an hour.
+
+But would you lose?
+
+Nah, I’d tokenize.
+
+Final Thoughts
+Homelabbing is having a renaissance, riding all the AI interest in the market. I saw one good video that actually went into the details I mentioned here: the real expectations, the limitations, and the ugly side you only see after you’ve already bought a setup that might not fit your needs.
+
+Most of the other content about running local AI is just promises of freedom in a few simple steps, and those steps are never as straightforward as they make them look.
+
+So, TL;DR (again):
+
+If you have multiple reasons to own a custom PC and you can build it yourself, go for it. Even if you don’t game that much, AI alone can justify it a little.
+If you have technical reasons to do personal things, like writing or taking notes, that shouldn’t be logged under a company’s plan.
+Any other reason involving uncensored models. Get the most out of your AI waifus, lol.

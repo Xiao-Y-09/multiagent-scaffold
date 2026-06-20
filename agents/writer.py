@@ -1,10 +1,14 @@
-from state import State
+from langchain_core.messages import SystemMessage, HumanMessage
 
-def make_writer(llm):          # llm 从外面传进来
-    def writer(state: State) -> dict:
-        out = llm.invoke([
-            ("system", "你是作家,根据研究员的要点撰写文章。"),
-            ("human", state["research"]),
-        ]).content
-        return {"draft": out, "revisions": state.get("revisions", 0) + 1}
+def make_writer(llm):
+    def writer(state):
+        research = state.get("research", "")
+        feedback = state.get("review", "")   # 第一轮为空;重写时有审稿意见
+        extra = f"\n\n审稿意见(请据此修改):\n{feedback}" if feedback else ""
+        prompt = [
+            SystemMessage(content="你是写作者,根据资料写一篇结构清晰的短文。"),
+            HumanMessage(content=f"资料:\n{research}{extra}\n\n请输出正文。"),
+        ]
+        resp = llm.invoke(prompt)
+        return {"draft": resp.content}
     return writer

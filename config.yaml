@@ -1,13 +1,24 @@
 entry: researcher
-edges:
-  researcher: writer
-  writer: reviewer
-  reviewer: END
 
 agents:
   researcher:
-    model: { provider: ollama, model: "gemma3:4b" }
+    model: gemma3:4b
+    top_k: 4
   writer:
-    model: { provider: ollama, model: "gemma3:27b" }
+    model: gemma3:27b
   reviewer:
-    model: { provider: ollama, model: "gemma3:27b" }
+    model: gemma3:4b
+
+edges:
+  - [researcher, writer]
+  - [writer, reviewer]
+
+conditional_edges:
+  - source: reviewer
+    router: review_router
+    paths:
+      revise: writer
+      pass: END
+
+settings:
+  max_revisions: 2
